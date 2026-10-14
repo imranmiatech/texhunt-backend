@@ -17,28 +17,23 @@ connectCloudinary()
 const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
-    "http://localhost:3000",
-    "http://localhost:4000",
-    "https://krisikunjo.shop",
-    "https://krisikunjo.vercel.app",
-    "https://krisikunjo-admin.vercel.app"
+    "https://texhunt-8m9k.vercel.app",
+    "https://texhunt-zlly-fawn.vercel.app"
 ]
 
 // Middleware
-app.use(express.json())
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (like mobile apps or curl) or if in allowedOrigins
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(null, true); // Allow all during dev so frontend never hits CORS error
-        }
+        // Allow all origins (localhost, all vercel preview domains, production domains)
+        callback(null, true);
     },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
-    allowedHeaders: ["Content-Type", "Authorization", "token"]
+    allowedHeaders: ["Content-Type", "Authorization", "token", "Origin", "Accept", "X-Requested-With"]
 }))
+app.options('*', cors())
+app.use(express.json())
+
 
 // API Endpoints
 app.use('/api/user', userRouter)
