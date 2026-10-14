@@ -34,7 +34,19 @@ app.use(cors({
 app.options('*', cors())
 app.use(express.json())
 
-
+// Ensure MongoDB is connected before handling any requests (serverless requirement)
+app.use(async (req, res, next) => {
+    try {
+        await connectDB()
+        next()
+    } catch (err) {
+        console.error("DB connection error:", err)
+        return res.status(500).json({
+            success: false,
+            message: `Database connection failed: ${err.message}. Make sure MongoDB Atlas Network Access allows 0.0.0.0/0 (all IPs) and environment variables are set in Vercel.`
+        })
+    }
+})
 // API Endpoints
 app.use('/api/user', userRouter)
 app.use('/api/product', productRouter)
